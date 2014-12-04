@@ -51,12 +51,39 @@ namespace JLSForeclosures
                 {"98121", "Belltown"},
             };
 
-            var saleDates = new List<string>()
+            var today = DateTime.UtcNow.Date;
+            var friday = DateTime.UtcNow.Date;
+
+            if (today.DayOfWeek == DayOfWeek.Saturday)
             {
-                "2014-12-05",
-                "2014-12-12",
-                "2014-12-19",
-                "2014-12-26",
+                friday = friday.AddDays(6);
+            }
+            else if (today.DayOfWeek == DayOfWeek.Sunday)
+            {
+                friday = friday.AddDays(5);
+            }
+            else if (today.DayOfWeek == DayOfWeek.Monday)
+            {
+                friday = friday.AddDays(4);
+            }
+            else if (today.DayOfWeek == DayOfWeek.Tuesday)
+            {
+                friday = friday.AddDays(3);
+            }
+            else if (today.DayOfWeek == DayOfWeek.Wednesday)
+            {
+                friday = friday.AddDays(2);
+            }
+            else if (today.DayOfWeek == DayOfWeek.Thursday)
+            {
+                friday = friday.AddDays(1);
+            }
+
+            var saleDates = new List<string>();
+            for (int week = 0; week < 8; week++)
+            {
+                var saleDate = friday.AddDays(7 * week).ToString("yyyy-MM-dd");
+                saleDates.Add(saleDate);
             };
 
             foreach (FileInfo f in new DirectoryInfo(Environment.CurrentDirectory).GetFiles("*.html"))
@@ -64,19 +91,19 @@ namespace JLSForeclosures
                 f.Delete();
             }
 
-            foreach(var saleDate in saleDates)
+            foreach (var saleDate in saleDates)
             {
-                foreach(var zipCode in zipCodes)
+                foreach (var zipCode in zipCodes)
                 {
                     form = new FormUrlEncodedContent(new Dictionary<string, string>
                     {
                         {"zip", zipCode.Key},
                         {"sale_date", saleDate},
                     });
-                   
+
                     response = await httpClient.PostAsync("http://www.jlsforeclosures.com/listings.php", form);
                     content = await response.Content.ReadAsStringAsync();
-                    
+
                     if (content.Contains("<p>No Results</p>"))
                     {
                         continue;
@@ -90,8 +117,8 @@ namespace JLSForeclosures
                     var filename = string.Format("{0}.{1}.{2}.html", saleDate, zipCode.Key, zipCode.Value);
                     Console.WriteLine("writing {0}", filename);
                     File.WriteAllText(filename, content);
-                }                
-            }            
+                }
+            }
         }
     }
 }
