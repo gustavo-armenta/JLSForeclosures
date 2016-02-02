@@ -28,7 +28,7 @@ namespace JLSForeclosures
                 {
                     {"Submitrelease", "Submit"},
                 });
-            response = await httpClient.PostAsync("http://www.jlsforeclosures.com/index.php", form);
+            response = await httpClient.PostAsync("http://www.jlsforeclosures.com/indexlistings.php", form);
             content = await response.Content.ReadAsStringAsync();
 
             var zipCodes = new Dictionary<string, string>()
@@ -38,12 +38,15 @@ namespace JLSForeclosures
                 {"98006", "BellevueSouth"},
                 {"98007", "Bellevue140th156th"},
                 {"98008", "Bellevue156thSammamishLake"},
+                {"98027", "IssaquahSouth"},
+                {"98029", "Issaquah"},
                 {"98033", "Kirkland"},
                 {"98034", "KirklandNorth"},
                 {"98040", "MercerIsland"},
                 {"98052", "Redmond"},
                 {"98056", "NewcastleRenton"},
                 {"98074", "Sammamish"},
+                {"98075", "SammamishSouth"},
                 {"98103", "FremontWallingfordGreenLake"},                
                 {"98105", "UW"},
                 {"98109", "QueenAnneSouthLakeUnion"},
@@ -109,10 +112,12 @@ namespace JLSForeclosures
                         continue;
                     }
 
-                    content = content.Replace("/css/style.css", "http://www.jlsforeclosures.com/css/style.css");
+                    content = content.Replace("css/bootstrap.css", "http://www.jlsforeclosures.com/css/bootstrap.css");
+                    content = content.Replace("css/responsive.css", "http://www.jlsforeclosures.com/css/responsive.css");
                     content = content.Replace("/phpThumb/phpThumb.php", "http://www.jlsforeclosures.com/phpThumb/phpThumb.php");
                     content = content.Replace("JLSForecloseureServiGreenTransparent.gif", "http://www.jlsforeclosures.com/JLSForecloseureServiGreenTransparent.gif");
-                    content = content.Replace("\\images\\star.jpg", "http://www.jlsforeclosures.com/images/star.jpg");
+                    content = content.Replace("/images/star.jpg", "http://www.jlsforeclosures.com/images/star.jpg");
+                    content = content.Replace("/nophoto.jpg", "http://www.jlsforeclosures.com/nophoto.jpg");
 
                     var filename = string.Format("{0}.{1}.{2}.html", saleDate, zipCode.Key, zipCode.Value);
                     Console.WriteLine("writing {0}", filename);
